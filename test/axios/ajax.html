@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn1">按钮1</button>
+  <button id="btn2">按钮2</button>
+  <button id="btn3">按钮3</button>
+  <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
+  <script>
+    const btn1 = document.getElementById('btn1')
+    const btn2 = document.getElementById('btn2')
+    const btn3 = document.getElementById('btn3')
+
+    //接收响应数据中的token
+    let token = ''; 
+    //btn1发送登录请求
+    btn1.onclick = function(){
+      axios({
+        method:'POST',
+        url:'http://localhost:5000/api/login',
+
+
+        /*
+          axios发送POST请求时，默认的数据类型是application/json类型
+          如果有需要，可以在请求头中更改请求的数据类型
+        */
+        // data:{
+        //   uesrname:'admin',
+        //   password:'admin'
+        // }
+        data:"username=admin&password=admin",
+        headers:{
+          'content-type':'application/x-www-form-urlencode'
+        }
+      })
+      .then((response)=>{
+        //当请求发送成功，判断响应的状态
+        if(response.data.status === 0){
+          // 如果响应成功,将登录成功后需要对用户展示的组件,渲染在页面上
+          console.log(response.data.data);
+          //接收响应数据中的token
+          token = response.data.data.token
+        }else{
+          //登陆失败
+          alert(response.data.msg)
+          
+        }
+
+      })
+      .catch((err)=>{
+        console.log(err);
+        alert("网络故障")
+        
+      })
+    }
+
+
+    //btn2获取后台资源
+    btn2.onclick=function(){
+      axios({
+          method: 'GET',
+          url: 'http://localhost:5000/api/category/get',
+          headers: {
+            authorization: 'Bearer ' + token
+          }
+        })
+        .then((response) => {
+          if (response.data.status === 0) {
+            console.log(response.data.data);
+          } else {
+            alert(response.data.msg);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          alert('网络出错~');
+        })
+    }
+    //
+
+    //btn3向后台添加数据
+    btn3.onclick = function () {
+      axios({
+          method: 'POST',
+          url: 'http://localhost:5000/api/category/add',
+          data: 'categoryName=鼠标',
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            authorization: 'Bearer ' + token
+          }
+        })
+        .then((response) => {
+          if (response.data.status === 0) {
+            console.log(response.data.data);
+          } else {
+            alert(response.data.msg);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          alert('网络出错~');
+        })
+    }
+  </script>
+</body>
+
+</html>

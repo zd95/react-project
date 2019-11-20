@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <button id="btn1">按钮1</button>
+  <button id="btn2">按钮2</button>
+  <button id="btn3">按钮3</button>
+  <script src="https://cdn.bootcss.com/axios/0.19.0/axios.min.js"></script>
+  <script>
+    const btn1 = document.getElementById('btn1')
+    const btn2 = document.getElementById('btn2')
+    const btn3 = document.getElementById('btn3')
+
+
+    //复用多个请求中公共的代码
+
+    //创建一个axios的实例对象,设置共用的请求头参数
+
+    const axiosInstance = axios.create({
+      baseURL: 'http://localhost:5000/api',
+      timeout: 10000,
+      header: {
+        // 初始化请求头参数,根据不同的请求方式来设置不同的请求头参数
+      }
+
+    })
+
+
+    //设置请求拦截器:对不同的请求方式,设置不同的参数{传一个回调函数}
+
+    axiosInstance.interceptors.resquest.use(
+
+      //获取当前请求所配置的具体数据,根据需求对其进行处理
+      (config) => {
+        //如果请求方式是POST,设置对应的请求头参数
+        if (config.method === 'POST') {
+          //设置请求数据的数据类型
+          config.headers['content-type'] = 'application/x-www-form-urlencode'
+
+          // 将数据转换成与之对应的数据类型
+          config.data = Object.keys(config.data).reduce((prev, key) => {
+            //提取每个属性中的值
+            const value = config.data[key]
+            //返回新的数据
+            return prev + `${key}=${value}`
+          }, '').substring(1)
+        }
+        //如果需要token,添加token
+        if (token) {
+          config.headers.authorization = 'Bearer ' + token
+        }
+
+        //返回新的请求配置参数
+      }
+    )
+
+
+    btni.onclick = function () {
+      axiosInstance({
+        method:'POST',
+        url:'/login',
+        data:{
+          username:'admin',
+          password:'admin'
+        }
+      })
+      .then((response)=>{
+        //请求发送成功,判断返回的响应中的状态码
+        if(response.data.status === 0){
+          //如果响应成功,将登录成功后需要对用户展示的组件,渲染于页面之上
+          console.log(response.data);
+          //设置token
+          token = response.data.token
+          
+        }else{
+          alert(response.data.msg)
+          
+        }
+
+      })
+      .catch((err)=>{
+        //收集错误信息
+        console.log(err);
+        
+        //提示错误
+        alert('网络故障')
+      })
+    }
+  </script>
+</body>
+
+</html>
