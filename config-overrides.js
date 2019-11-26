@@ -1,37 +1,25 @@
-
-//配置antd
-
-/*
-
-npm npm install antd --save
-
-npm i react-app-rewired customize-cra babel-plugin-import --dev
-
-npm i  less less-loader --dev
-  修改package.json配置
-   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
-  },
-*/
 const {
-   override,
-   fixBabelImports,
-   addLessLoader
- } = require('customize-cra');
+  override,
+  fixBabelImports,
+  addLessLoader,
+  addDecoratorsLegacy
+} = require('customize-cra');
 
- module.exports = override(
-   fixBabelImports('import', {
-     libraryName: 'antd',
-     libraryDirectory: 'es',
-     style: true,
-   }),
-   addLessLoader({
-     javascriptEnabled: true,
-     modifyVars: {
-       '@primary-color': '#1DA57A'
-     },
-   }),
- );
+module.exports = override(
+  // 按需加载
+  fixBabelImports('import', {
+    libraryName: 'antd',
+    libraryDirectory: 'es',
+    style: true,
+  }),
+  // 自定义主题
+  addLessLoader({
+    javascriptEnabled: true,
+    modifyVars: {
+      '@primary-color': '#1DA57A'
+    },
+  }),
+  // 添加装饰器语法
+  // yarn add @babel/plugin-proposal-decorators --dev
+  addDecoratorsLegacy()
+);

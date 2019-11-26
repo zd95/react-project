@@ -1,10 +1,12 @@
-import { combineReducers } from 'redux'
+import {
+  combineReducers
+} from 'redux'
 
-import A from './a'
+import user from './user'
+import category from './category'
 
 
 export default combineReducers({
-
-  A
-
+  user,
+  categories:category
 })

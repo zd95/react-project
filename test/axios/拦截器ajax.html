@@ -100,9 +100,35 @@
         */
 
         // 定义一个codeMessasge保存可能出错的信
-   }
+        const codeMessage = {
+          401: '没有权限访问接口',
+          403: '禁止访问',
+          404: '资源不存在',
+          500: '哇哦，故障了，请联系管理员~'
+        }
+
+        let errorMessage = '';
+
+        if (error.response) {
+          // 说明服务器返回了响应
+          errorMessage = codeMessage[error.response.status] || '未知错误';
+        } else {
+          // 说明服务器没有返回响应，请求还没给服务器 / 还没有接受到服务器的响应 请求就终止了
+          if (error.message.indexOf('Network Error') !== -1) {
+            errorMessage = '请检查网络连接';
+          } else if (error.message.indexOf('timeout') !== -1) {
+            errorMessage = '网络太卡了，请连上wifi重试';
+          } else {
+            errorMessage = '未知错误';
+          }
+        }
+        // console.dir(error);
+        alert(errorMessage);
+        return Promise.reject(errorMessage);
+      }
+   
  )
-    btni.onclick = function () {
+    btn1.onclick = function () {
       axiosInstance({
         method:'POST',
         url:'/login',
