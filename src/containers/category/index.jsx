@@ -11,6 +11,7 @@ import {
   delCategoryAsync,
 } from '../../redux/action-creators/category';
 
+
 @connect(
   state => ({ categories: state.categories }),
   {
@@ -64,7 +65,7 @@ class Category extends Component {
 
         return (
           <div>
-            <Button type="link" onClick={this.recerieUpdateCategory(category)}>修改分类</Button>
+            <Button type="link" onClick={this.showUpdateCategory(category)}>修改分类</Button>
             {
               /*
                 设置删除分类数据的方法，当用户点击删除按钮时，弹出删除弹框，删除数据
@@ -115,7 +116,7 @@ class Category extends Component {
     this.updateCategoryForm.props.form.validateFields(async (err, values) => {
       //如果用户需要更新的数据符合校验规则,将更新的数据发送至后台
       if (!err) {
-        // console.log(values);
+        console.log(values);
         //提取更新数据的数据类名
         const { categoryName } = values
         //提取被更新的数据的id值
@@ -129,6 +130,7 @@ class Category extends Component {
 
     })
   }
+
 
   //隐藏弹框
   hidden = (name) => {
@@ -144,7 +146,9 @@ class Category extends Component {
   }
 
   //用户点击表格中的修改分类按钮时，获取用户输入的数据，更新当前组件的状态
-  recerieUpdateCategory = category => {
+  showUpdateCategory = category => {
+    console.log(category);
+
     return () => {
       this.setState({
         //弹出修改弹框
@@ -170,12 +174,12 @@ class Category extends Component {
             <span>
               您确认要删除
               <span style={{ color: "red", fontWeight: "bold" }}>
-                  {category.name}
+                {category.name}
               </span>
               分类数据吗？
           </span>
           ),
-          onOk:()=>{
+          onOk: () => {
             //如果用户点击确认删除，将当前分类数据的id发送至后台，删除数据
             //同时删除redux中对应的数据
             this.props.delCategoryAsync(category._id);
@@ -186,7 +190,11 @@ class Category extends Component {
   }
   //发送请求
   componentDidMount() {
-    this.props.getCategoriesAsync()
+    //如果分类列表中的数据值为空
+    if(!this.props.categories.length){
+      this.props.getCategoriesAsync()
+    }
+    
   }
   render() {
 
@@ -249,6 +257,7 @@ class Category extends Component {
           onCancel={this.hidden("updateCategory")}
           width={300}
         >
+
           {
             /*
               wrappedComponentRef方法：

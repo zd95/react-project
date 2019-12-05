@@ -8,13 +8,15 @@ import { Link, withRouter } from 'react-router-dom'
 import PropTypes from "prop-types";
 //引入菜单数据
 import menus from '../../../config/menus'
-
+import { connect } from 'react-redux'
 
 const { SubMenu } = Menu;
 
 //引入withRouter高阶组件，向当前组件传递路由组件特有的三大属性
 //获取组件当前的路径
 //当前组件经过withTranslation高阶组件转换后，组件会继承其切换语言的属性
+
+@connect((state) => ({ authMenus: state.user.user.menus }))
 @withTranslation()
 @withRouter
 class LeftNav extends Component {
@@ -89,7 +91,7 @@ class LeftNav extends Component {
       //判断菜单是否有子菜单
       if (menu.children) {
         //找到与当前路径对应的菜单
-        const cMenu = menu.children.find(cMenu => cMenu.path === pathname);
+        const cMenu = menu.children.find(cMenu => pathname.startsWith(cMenu.path));
         //如果cMenu有值，就返回对应的路径
         if (cMenu) {
           return menu.path
@@ -106,14 +108,42 @@ class LeftNav extends Component {
   //   })
   // }
   render() {
-    const menusList = this.createMenus(menus)
-    const { t } = this.props
+
+    //从当前组件的标签属性中提取不同用户所对应的不同访问权限的菜单数据
+    const { t, authMenus } = this.props
     //获取当前组件的地址，当刷新浏览器时，让页面继续停留
-    const { pathname } = this.props.location
+    let { pathname } = this.props.location
 
+    pathname = pathname.startsWith('/product') ? '/product' : pathname
+
+
+    //根据用户的访问权限，在页面中渲染相对应的菜单数据
+    //收集通过验证的菜单数据
+    const passMenus = menus.reduce((prevMenus, menu) => {
+      /*
+        根据每条菜单数据中所包含的路径信息
+        从所有的菜单数据中筛选出与用户访问权限相匹配的菜单数据
+      */
+      if (authMenus.indexOf(menu.path) !== -1) {
+        //如果全部匹配，将所有的菜单数据返回
+        return [...prevMenus, menu]
+      }
+      //如果匹配上了菜单的某个子菜单
+      if (menu.children) {
+        const newMenu = { ...menu }
+        //筛选匹配上的子菜单数据
+        newMenu.children = menu.children.filter(
+          cMenu => authMenus.indexOf(cMenu.path) !== -1
+        )
+        //返回匹配上的所有数据
+        return [...prevMenus, newMenu]
+      }
+
+      return prevMenus;
+    }, [])
     //获取与当前页面地址对应的菜单地址{/*让与当前页面对应的菜单默认展开*/}
-    const openKey = this.findCurrentPath(menus, pathname)
-
+    const openKey = this.findCurrentPath(passMenus, pathname)
+    const menusList = this.createMenus(passMenus)
 
     return (
       <div>

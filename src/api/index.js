@@ -54,11 +54,156 @@ export const reqDelCategory = (categoryId) => axiosInstance({
 
 
 //请求商品列表数据
-export const reqGetProducts = (pageNum,pageSize)=>axiosInstance({
-  method:'GET',
-  url:'/product/list',
-  params:{
+export const reqGetProducts = (pageNum, pageSize) => axiosInstance({
+  method: 'GET',
+  url: '/product/list',
+  params: {
     pageNum,
     pageSize
+  }
+})
+
+
+//请求添加商品数据
+export const reqAddProduct = ({
+  name,
+  desc,
+  categoryId,
+  price,
+  detail
+}) => axiosInstance({
+  method: 'POST',
+  url: '/product/add',
+  data: {
+    name,
+    desc,
+    categoryId,
+    price,
+    detail
+  }
+})
+
+//请求获取单个商品的数据
+export const reqGetProduct = (productId) => axiosInstance({
+  method: 'GET',
+  url: '/product/get',
+  params: {
+    productId
+  }
+})
+
+//请求修改商品
+export const reqUpdateProduct = ({
+  name,
+  desc,
+  categoryId,
+  price,
+  detail,
+  productId
+}) => axiosInstance({
+  method: 'POST',
+  url: '/product/update',
+  data: {
+    name,
+    desc,
+    categoryId,
+    price,
+    detail,
+    productId
+  }
+})
+
+//更新产品状态码
+export const reqUpdateProductStatus = (productId, status) => axiosInstance({
+  method: 'POST',
+  url: '/product/update/status',
+  data: {
+    productId,
+    status
+  }
+
+})
+
+//请求 用户搜索的商品
+export const reqSearchProducts = ({
+  searchType,
+  searchValue,
+  pageNum,
+  pageSize
+}) => axiosInstance({
+  method: 'GET',
+  url: '/product/search',
+  params: {
+    [searchType]: searchValue,
+    pageNum,
+    pageSize
+  }
+})
+
+//请求获取角色数据
+export const reqGetRoles = () => axiosInstance({
+  method: 'GET',
+  url: '/role/get'
+})
+
+//请求创建用户角色
+export const reqAddRoles = (name) => axiosInstance({
+  method: 'POST',
+  url: '/role/add',
+  data: {
+    name
+  }
+})
+
+//将用户修改的角色权限的记录发送至后台
+// export const reqUpdateRoles = ({
+//   roleId,
+//   authName,
+//   menus
+// }) => axiosInstance({
+//   method: 'POST',
+//   url: 'role/update',
+//   data: {
+//     roleId,
+//     authName,
+//     menus
+//   }
+// })
+export const reqUpdateRoles = ({
+  roleId,
+  menus,
+  authName
+}) => axiosInstance({
+  method: 'POST',
+  url: '/role/update',
+  data: {
+    roleId,
+    menus,
+    authName
+  }
+})
+
+//向后台请求用户数据
+export const reqGetUsers = () => axiosInstance({
+  method: 'GET',
+  url: '/user/get'
+})
+
+//将新创建的用户数据发送至后台
+export const reqAddUser = ({
+  username,
+  password,
+  phone,
+  email,
+  roleId
+}) => axiosInstance({
+  method: 'POST',
+  url: '/user/add',
+  data: {
+    username,
+    password,
+    phone,
+    email,
+    roleId
   }
 })

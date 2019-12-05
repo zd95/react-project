@@ -12,8 +12,7 @@ class UpdateCategoryForm extends Component {
 
   //经过@Form.create()包装后的组件会继承Form.props.form属性，实现组件之间表单数据的双向传递
   //获取form属性中的 getFieldDecorator方法,来进行表单校验，
-  //getFieldDecorator方法第一次调用时，
-  //传入表单控件对应的id，{表单的校验规则}
+  //getFieldDecorator方法第一次调用时，传入表单控件对应的id，{表单的校验规则}
   /* rule:表单的控件
     value:控件内接收的数据
     callback:回调函数
@@ -24,17 +23,21 @@ class UpdateCategoryForm extends Component {
          */
 
   //设置表单数据的校验规则
-  validator=(value,callback)=>{
+  validator = (_rule, value, callback) => {
     //如果用户输入的数据与当前分类中的数据相等，不更新数据
-    if(value === this.props.categoryName){
+    // console.log(value);
+
+    if (value === this.props.categoryName) {
       callback("哇偶~you can real dance")
-    }else{
+    } else {
       callback()
     }
   }
   render() {
     const { form: { getFieldDecorator }, categoryName } = this.props
-
+    // const { getFieldDecorator } = this.props.form;
+    // const { categoryName } = this.props;
+    console.log(categoryName)
     return (
       <Form>
         <Form.Item label="品类名称">
@@ -43,17 +46,17 @@ class UpdateCategoryForm extends Component {
               "categoryName",
               {
                 rules: [
-                  { required: true, message: "请输入分类名称" },
+                  { required: true, message: "哇偶~you can real dance" },
                   { validator: this.validator }
                 ],
                 //设置表单控件的初始值
-                initialValue:categoryName
+                initialValue: categoryName
               }
-            )(<Input placeholder="请输入分类名称"/>)
+            )(<Input placeholder="请输入分类名称" />)
           }
         </Form.Item>
       </Form>
-    )
+    );
   }
 }
 export default UpdateCategoryForm

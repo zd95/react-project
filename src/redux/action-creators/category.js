@@ -26,7 +26,6 @@ const getCategoriesSuccess = (categories) => ({
 //异步方法发送请求{获取分类列表}
 export const getCategoriesAsync = () => {
   return (dispatch) => {
-
     //等数据响应成功，调用dispatch方法生成的状态数据对象，保存至store对象中
     return reqGetCategories()
       .then((response) => {

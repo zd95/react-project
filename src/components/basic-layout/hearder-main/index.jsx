@@ -7,6 +7,8 @@ import { connect } from 'react-redux'
 // import dayjs from 'dayjs'
 import { removeItem } from '../../../utils/local-storage'
 import { delUserSuccess } from '../../../redux/action-creators/user'
+//antd组件的语言国际化
+import { steLanguageSuccess  } from '../../../redux/action-creators/language'
 //向非路由组件传递location
 import { withRouter } from 'react-router-dom'
 import menus from '../../../config/menus'
@@ -16,7 +18,7 @@ import './index.less';
 @connect(
   //显示用户名,从store对象中获取当前的用户
   (state) => ({ username: state.user.user.username }),
-  { delUserSuccess }
+  { delUserSuccess,steLanguageSuccess }
 )
 @withTranslation()
 class HeaderMain extends Component {
@@ -81,11 +83,14 @@ class HeaderMain extends Component {
 
   //切换语言
   changeLang = () => {
+    const isLanguage = !this.state.isLanguage;
     this.setState({
-      isLanguage: !this.state.isLanguage
+      isLanguage
     })
     //根据当前组建的状态，来切换语言
-    this.props.i18n.changeLanguage(this.state.isLanguage ? 'zh' : 'en')
+    const language = isLanguage ? 'zh' : 'en'
+    this.props.i18n.changeLanguage(language)
+    this.props.steLanguageSuccess(language)
   }
   //组件挂载时，监听屏幕的额变化
   componentDidMount() {
@@ -120,7 +125,7 @@ class HeaderMain extends Component {
       //如果菜单中包含子菜单
       if (menu.children) {
         //找到与当前路径相对应的子菜单
-        const cMenu = menu.children.find(cMenu => cMenu.path === pathname);
+        const cMenu = menu.children.find(cMenu =>pathname.startsWith(cMenu.path));
         //如果找到
         if (cMenu) {
           title = cMenu.title;
